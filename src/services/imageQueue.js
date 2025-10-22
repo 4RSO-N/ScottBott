@@ -1,15 +1,13 @@
 const logger = require('../utils/logger');
 
 class ImageQueue {
-    constructor() {
-        this.initialized = false;
-        this.activeJobs = new Map(); // Track active jobs per user
-        this.jobHistory = []; // Keep recent job history
-        this.maxHistorySize = 100;
-        this.userJobs = new Map(); // Track jobs per user for debouncing
-        this.debounceTimeout = 2500; // 2.5 seconds debounce window
-        this.jobCounter = 0; // Simple job ID counter
-    }
+    initialized = false;
+    activeJobs = new Map(); // Track active jobs per user
+    jobHistory = []; // Keep recent job history
+    maxHistorySize = 100;
+    userJobs = new Map(); // Track jobs per user for debouncing
+    debounceTimeout = 2500; // 2.5 seconds debounce window
+    jobCounter = 0; // Simple job ID counter
 
     /**
      * Initialize the image queue (simplified without Redis)
@@ -158,15 +156,15 @@ class ImageQueue {
                 const hf = this.huggingfaceService;
                 if (hf) {
                     imageResult = await hf.generateImage(prompt, {
-                        width: parseInt(qualityOptions.size.split('x')[0], 10) || 1024,
-                        height: parseInt(qualityOptions.size.split('x')[1], 10) || 1024
+                        width: Number.parseInt(qualityOptions.size.split('x')[0], 10) || 1024,
+                        height: Number.parseInt(qualityOptions.size.split('x')[1], 10) || 1024
                     });
                 }
             } catch (hfError) {
                 logger.warn('Hugging Face image generation failed, attempting Gemini fallback:', hfError.message || hfError);
             }
 
-            if (!imageResult || !imageResult.success) {
+            if (!imageResult?.success) {
                 // Gemini fallback
                 const gemini = this.geminiService;
                 if (!gemini) {
@@ -175,7 +173,7 @@ class ImageQueue {
 
                 imageResult = await gemini.generateImage(prompt, qualityOptions);
 
-                if (!imageResult || !imageResult.success) {
+                if (!imageResult?.success) {
                     throw new Error(imageResult?.error || 'Image generation failed');
                 }
             }
@@ -290,10 +288,12 @@ class ImageQueue {
                     emoji = '⏳';
                     statusText = 'Your image is queued for generation...';
                     break;
-                case 'generating':
+                case 'generating': {
                     emoji = '🎨';
-                    statusText = `Generating your image${status.tier ? ` (${status.tier} quality)` : ''}...`;
+                    const tierText = status.tier ? ` (${status.tier} quality)` : '';
+                    statusText = `Generating your image${tierText}...`;
                     break;
+                }
                 case 'uploading':
                     emoji = '📤';
                     statusText = 'Uploading your image...';
@@ -460,7 +460,7 @@ class ImageQueue {
      * @param {Object} interaction - Discord button interaction
      */
     async handleUpscale(interaction) {
-        const [action, userId] = interaction.customId.split('_').slice(1);
+        const [, userId] = interaction.customId.split('_').slice(1);
 
         // Verify the button is for this user
         if (userId !== interaction.user.id) {

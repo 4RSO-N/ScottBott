@@ -146,15 +146,15 @@ module.exports = {
 
         const embed = new EmbedBuilder()
             .setTitle('📋 Your Presets')
-            .setDescription(`You have ${presets.length} saved preset${presets.length !== 1 ? 's' : ''}:`)
+            .setDescription(`You have ${presets.length} saved preset${presets.length === 1 ? '' : 's'}:`)
             .setColor('#4285f4');
 
         let presetList = '';
-        presets.forEach((preset, index) => {
+        for (const [index, preset] of presets.entries()) {
             presetList += `${index + 1}. **${preset.name}**\n`;
             presetList += `   🎭 ${preset.style} • 📐 ${preset.aspectRatio} • ✨ ${preset.quality}\n`;
             presetList += `   _Updated: ${new Date(preset.updated_at).toLocaleDateString()}_\n\n`;
-        });
+        }
 
         embed.addFields({
             name: 'Saved Presets',
@@ -166,14 +166,14 @@ module.exports = {
             const { ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
             const row = new ActionRowBuilder();
 
-            presets.slice(0, 4).forEach(preset => {
+            for (const preset of presets.slice(0, 4)) {
                 row.addComponents(
                     new ButtonBuilder()
                         .setCustomId(`preset_use_${interaction.user.id}_${preset.name}`)
                         .setLabel(preset.name)
                         .setStyle(ButtonStyle.Secondary)
                 );
-            });
+            }
 
             components.push(row);
         }

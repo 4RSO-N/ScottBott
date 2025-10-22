@@ -7,13 +7,23 @@ const WebhookValidator = require('./webhookValidator');
 
 class SecurityManager {
     constructor() {
-        this.secretManager = SecretManager;
+        this.secretManager = new SecretManager();
         this.contentPolicyGate = ContentPolicyGate;
         this.attachmentSanitizer = AttachmentSanitizer;
         this.abuseControl = AbuseControl;
         this.webhookValidator = WebhookValidator;
 
-        logger.info('✅ Security manager initialized with all security systems');
+        // Initialize secret manager asynchronously
+        this.initializeSecretManager();
+    }
+
+    async initializeSecretManager() {
+        try {
+            await this.secretManager.initializeEncryption();
+        } catch (error) {
+            logger.error('Failed to initialize secret manager:', error);
+            // Don't throw - allow system to continue without encrypted secrets
+        }
     }
 
     /**

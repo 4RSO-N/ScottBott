@@ -9,9 +9,6 @@ class SecretManager {
         this.keyRotationInterval = 24 * 60 * 60 * 1000; // 24 hours
         this.encryptionKey = null;
         this.initialized = false;
-
-        // Generate or load master encryption key
-        this.initializeEncryption();
     }
 
     /**
@@ -26,7 +23,7 @@ class SecretManager {
                 this.encryptionKey = await fs.readFile(keyPath);
                 logger.info('✅ Loaded existing master encryption key');
             } catch (error) {
-                // Generate new key if it doesn't exist
+                // Generate new key if it doesn't exist - this is expected behavior
                 this.encryptionKey = crypto.randomBytes(32);
                 await fs.mkdir(path.dirname(keyPath), { recursive: true });
                 await fs.writeFile(keyPath, this.encryptionKey);
@@ -68,7 +65,7 @@ class SecretManager {
                 logger.info(`Loaded ${this.secrets.size} encrypted secrets`);
 
             } catch (error) {
-                // No secrets file exists yet
+                // No secrets file exists yet - this is expected for first run
                 logger.info('No encrypted secrets file found, starting fresh');
             }
 
@@ -337,4 +334,4 @@ class SecretManager {
     }
 }
 
-module.exports = new SecretManager();
+module.exports = SecretManager;

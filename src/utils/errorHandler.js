@@ -31,7 +31,19 @@ class ErrorHandler {
         // Handle unhandled promise rejections
         process.on('unhandledRejection', (reason, promise) => {
             console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-            const reasonStr = reason instanceof Error ? reason.message : (typeof reason === 'object' ? JSON.stringify(reason) : String(reason));
+            let reasonStr;
+            if (reason instanceof Error) {
+                reasonStr = reason.message;
+            } else if (typeof reason === 'object' && reason !== null) {
+                try {
+                    reasonStr = JSON.stringify(reason);
+                } catch {
+                    // JSON.stringify can fail on circular references
+                    reasonStr = Object.prototype.toString.call(reason);
+                }
+            } else {
+                reasonStr = String(reason);
+            }
             logger.error('Unhandled Rejection', { 
                 reason: reasonStr, 
                 promise: promise?.constructor?.name || 'Promise' 

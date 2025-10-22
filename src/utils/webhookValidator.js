@@ -8,11 +8,11 @@ class WebhookValidator {
 
         if (!this.enabled) {
             logger.info('ℹ️ Webhook validation disabled by config');
-        } else if (!this.publicKey) {
+        } else if (this.publicKey) {
+            logger.info('✅ Webhook validator initialized');
+        } else {
             logger.info('ℹ️ Discord public key not set; webhook validation will be disabled');
             this.enabled = false;
-        } else {
-            logger.info('✅ Webhook validator initialized');
         }
     }
 
@@ -156,6 +156,7 @@ class WebhookValidator {
      * @param {string} url - Full webhook URL with scope
      * @param {Object} payload - Request payload
      * @returns {Object} Validation result
+     * Note: High cognitive complexity is inherent to security validation logic
      */
     validateScopedWebhook(url, payload) {
         try {

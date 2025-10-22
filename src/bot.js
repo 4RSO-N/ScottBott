@@ -38,7 +38,6 @@ class ScottBot {
         // Initialize new components
         this.conversationManager = new ConversationManager();
     this.imageProcessor = new ImageProcessor();
-    const ImageQueueClass = require('./services/imageQueue');
     this.imageQueue = null; // will initialize after services are ready
         this.performanceMonitor = new PerformanceMonitor();
         this.slashCommandManager = new SlashCommandManager(this);
@@ -196,9 +195,6 @@ class ScottBot {
             try {
                 // Security check for slash commands
                 if (interaction.isChatInputCommand()) {
-                }
-
-                if (interaction.isChatInputCommand()) {
                     await this.slashCommandManager.handleInteraction(interaction, this.aiRouter, this.imageQueue, this.presetManager);
                 } else if (interaction.isButton()) {
                     await this.slashCommandManager.handleButtonInteraction(interaction, this.aiRouter, this.imageQueue, this.presetManager);
@@ -342,7 +338,7 @@ class ScottBot {
         }
         
         // Clean up extra spaces and punctuation
-        cleaned = cleaned.replace(/\s{2,}/g, ' ').replace(/^\s*[,!?]\s*/, '');
+        cleaned = cleaned.replaceAll(/\s{2,}/g, ' ').replace(/^\s*[,!?]\s*/, '');
         
         return cleaned.trim();
     }
@@ -431,7 +427,6 @@ class ScottBot {
         // Image analysis disabled - bot will not automatically analyze uploaded images
         // Users can still use /analyze command if they want image analysis
         logger.info('Image upload received but automatic analysis is disabled.');
-        return;
     }
 
     isImageRequest(message) {

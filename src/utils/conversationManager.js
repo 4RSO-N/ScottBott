@@ -99,12 +99,12 @@ class ConversationManager {
         // This is required by Perplexity API which mandates user/assistant alternation
         let lastRole = 'system'; // Start after system message
         for (const msg of selected) {
-            if (msg.role !== lastRole) {
-                messages.push(msg);
-                lastRole = msg.role;
-            } else {
+            if (msg.role === lastRole) {
                 // Skip consecutive messages of the same role
                 logger.debug(`Skipping consecutive ${msg.role} message to enforce alternation`);
+            } else {
+                messages.push(msg);
+                lastRole = msg.role;
             }
         }
 

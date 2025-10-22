@@ -24,18 +24,18 @@ if (missingVars.length > 0) {
 console.log('✅ All environment variables configured');
 console.log('🤖 Initializing ScottBot...\n');
 
+console.log('🤖 Initializing ScottBot...\n');
+
 // Start the bot
 let bot;
-(async () => {
-    try {
-        bot = new ScottBot();
-        await bot.init();
-    } catch (error) {
-        console.error('❌ Failed to start ScottBot:', error.message);
-        console.error(error.stack);
-        process.exit(1);
-    }
-})();
+try {
+    bot = new ScottBot();
+    await bot.init();
+} catch (error) {
+    console.error('❌ Failed to start ScottBot:', error.message);
+    console.error(error.stack);
+    process.exit(1);
+}
 
 // Handle process termination
 process.on('SIGINT', async () => {

@@ -48,45 +48,7 @@ module.exports = {
 
                 await interaction.editReply(result);
             } else {
-                // Generate multiple images
-                const results = [];
-                const files = [];
-                
-                // Update status
-                await interaction.editReply({ content: `🎨 Generating ${count} images...` });
-                
-                for (let i = 0; i < count; i++) {
-                    try {
-                        const result = await aiRouter.generateImage(prompt, {
-                            width,
-                            height,
-                            userId: interaction.user.id,
-                            username: interaction.user.username
-                        });
-                        
-                        if (result.files && result.files.length > 0) {
-                            // Rename file to include number
-                            result.files[0].name = `image-${i + 1}-${Date.now()}.png`;
-                            files.push(result.files[0]);
-                        }
-                        
-                        // Small delay between requests to avoid rate limits
-                        if (i < count - 1) {
-                            await new Promise(resolve => setTimeout(resolve, 1000));
-                        }
-                    } catch (err) {
-                        console.error(`Failed to generate image ${i + 1}:`, err);
-                    }
-                }
-                
-                if (files.length === 0) {
-                    throw new Error('Failed to generate any images');
-                }
-                
-                await interaction.editReply({
-                    content: `✨ Generated ${files.length}/${count} images!`,
-                    files: files
-                });
+                await this.generateMultipleImages(interaction, aiRouter, prompt, width, height, count);
             }
 
         } catch (error) {
@@ -97,5 +59,45 @@ module.exports = {
 
             await interaction.editReply({ embeds: [errorEmbed] });
         }
+    },
+
+    async generateMultipleImages(interaction, aiRouter, prompt, width, height, count) {
+        const files = [];
+        
+        // Update status
+        await interaction.editReply({ content: `🎨 Generating ${count} images...` });
+        
+        for (let i = 0; i < count; i++) {
+            try {
+                const result = await aiRouter.generateImage(prompt, {
+                    width,
+                    height,
+                    userId: interaction.user.id,
+                    username: interaction.user.username
+                });
+                
+                if (result.files && result.files.length > 0) {
+                    // Rename file to include number
+                    result.files[0].name = `image-${i + 1}-${Date.now()}.png`;
+                    files.push(result.files[0]);
+                }
+                
+                // Small delay between requests to avoid rate limits
+                if (i < count - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            } catch (err) {
+                console.error(`Failed to generate image ${i + 1}:`, err);
+            }
+        }
+        
+        if (files.length === 0) {
+            throw new Error('Failed to generate any images');
+        }
+        
+        await interaction.editReply({
+            content: `✨ Generated ${files.length}/${count} images!`,
+            files: files
+        });
     }
 };

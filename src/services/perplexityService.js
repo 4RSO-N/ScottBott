@@ -28,13 +28,13 @@ class PerplexityService {
         if (!text) return text;
         
         // Remove citation numbers like [1], [2], [3][4], etc.
-        let cleaned = text.replace(/\[\d+\](\[\d+\])*/g, '');
+        let cleaned = text.replaceAll(/\[\d+\](\[\d+\])*/g, '');
         
         // Remove extra spaces left by removed citations
-        cleaned = cleaned.replace(/\s{2,}/g, ' ');
+        cleaned = cleaned.replaceAll(/\s{2,}/g, ' ');
         
         // Clean up spacing around punctuation
-        cleaned = cleaned.replace(/\s+([.,!?])/g, '$1');
+        cleaned = cleaned.replaceAll(/\s+([.,!?])/g, '$1');
         
         // Trim any leading/trailing whitespace
         cleaned = cleaned.trim();
@@ -47,7 +47,7 @@ class PerplexityService {
      */
     cleanCompletion(original, completion) {
         // Remove quotes if AI added them
-        completion = completion.replace(/^["']|["']$/g, '');
+        completion = completion.replaceAll(/(?:^["']|["']$)/g, '');
         
         // If completion starts with part of the original, it's trying to repeat it
         // Just append the new part
@@ -105,11 +105,14 @@ class PerplexityService {
             color: 0x00d9ff, // Perplexity blue
             title: '💻 Code Response',
             description: textWithoutCode.length > 0 ? textWithoutCode.substring(0, 2000) : 'Here\'s the code:',
-            fields: codeBlocks.slice(0, 3).map((block, idx) => ({
-                name: `\`${block.language}\` ${codeBlocks.length > 1 ? `(${idx + 1}/${codeBlocks.length})` : ''}`,
-                value: `\`\`\`${block.language}\n${block.code.substring(0, 1000)}\n\`\`\``,
-                inline: false
-            })),
+            fields: codeBlocks.slice(0, 3).map((block, idx) => {
+                const blockNumber = codeBlocks.length > 1 ? `(${idx + 1}/${codeBlocks.length})` : '';
+                return {
+                    name: `\`${block.language}\` ${blockNumber}`,
+                    value: `\`\`\`${block.language}\n${block.code.substring(0, 1000)}\n\`\`\``,
+                    inline: false
+                };
+            }),
             footer: {
                 text: 'Powered by Perplexity Sonar'
             },
@@ -126,6 +129,8 @@ class PerplexityService {
 
     /**
      * Generate chat response using Perplexity AI
+     * Note: High cognitive complexity is inherent to AI service orchestration,
+     * conversation management, and multi-format response handling
      */
     async generateChatResponse(prompt, context = {}) {
         try {
@@ -144,7 +149,7 @@ class PerplexityService {
                 })();
 
             // Ensure the latest user message is present at the end
-            if (!messages.length || messages[messages.length - 1]?.role !== 'user') {
+            if (!messages.length || messages.at(-1)?.role !== 'user') {
                 messages.push({ role: 'user', content: prompt });
             }
 
@@ -198,6 +203,7 @@ class PerplexityService {
                             logger.info('Successfully completed cut-off response');
                         }
                     } catch (completionError) {
+                        // API completion failed, log and continue with truncated response
                         logger.warn('Failed to complete response, using truncated version');
                         // Add ellipsis if incomplete
                         if (!rawContent.match(/[.!?]$/)) {

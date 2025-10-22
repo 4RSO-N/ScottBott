@@ -192,7 +192,7 @@ class ConfigurationManager {
 
     toggleFeature(feature, enabled = null) {
         const currentState = this.get(`features.${feature}`);
-        const newState = enabled !== null ? enabled : !currentState;
+        const newState = enabled !== null ? enabled : Boolean(!currentState);
         return this.set(`features.${feature}`, newState);
     }
 

@@ -418,14 +418,14 @@
             }
 
             let html = '';
-            data.recentErrors.slice(0, 5).forEach(error => {
+            for (const error of data.recentErrors.slice(0, 5)) {
                 html += `
                     <div class="error-item">
                         <strong>${error.type}</strong>: ${error.message}
                         <br><small>Service: ${error.service} | ${error.timestamp}</small>
                     </div>
                 `;
-            });
+            }
             container.innerHTML = html;
         }
 
@@ -496,9 +496,17 @@
         function showStatus(message, type) {
             const statusEl = document.getElementById('control-status');
             statusEl.textContent = message;
-            statusEl.style.color = type === 'success' ? '#4CAF50' : 
-                                 type === 'warning' ? '#FF9800' : 
-                                 type === 'error' ? '#f44336' : '#e0e0e0';
+            let color;
+            if (type === 'success') {
+                color = '#4CAF50';
+            } else if (type === 'warning') {
+                color = '#FF9800';
+            } else if (type === 'error') {
+                color = '#f44336';
+            } else {
+                color = '#e0e0e0';
+            }
+            statusEl.style.color = color;
             
             setTimeout(() => {
                 statusEl.textContent = '';

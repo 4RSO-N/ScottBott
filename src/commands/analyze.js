@@ -43,16 +43,8 @@ module.exports = {
                 });
             }
 
-            // Create analysis prompt based on focus
-            const prompts = {
-                general: 'Describe this image in detail, including what you see, the setting, and any notable features.',
-                objects: 'Identify and describe all objects, people, animals, and items visible in this image.',
-                colors: 'Analyze the colors, composition, lighting, and visual elements of this image.',
-                text: 'Identify and transcribe any text, signs, labels, or writing visible in this image.',
-                artistic: 'Provide an artistic analysis of this image, including style, technique, mood, and aesthetic qualities.'
-            };
-
             // Note: image analysis is disabled. We still validate file and show metadata.
+            // Image analysis prompts are defined but not used since analysis is disabled
 
             // Image analysis is disabled
             const analysisResult = {
