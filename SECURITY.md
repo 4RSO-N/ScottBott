@@ -1,3 +1,30 @@
+# Security Policy
+
+## Supported Versions
+- Main branch is actively maintained.
+
+## Reporting a Vulnerability
+If you discover a security vulnerability, please report it privately via GitHub issues or email. **Do not disclose sensitive information in public channels.**
+
+## Key Management
+- API keys and secrets must be stored in `.env` files, never committed to version control.
+- Rotate any keys that may have been exposed in previous commits.
+- Use environment variables for all sensitive configuration.
+
+## Best Practices
+- Review `.gitignore` to ensure secrets are excluded.
+- Use GitHub push protection and secret scanning.
+- Regularly audit dependencies for vulnerabilities.
+
+## Incident Response
+If a secret is accidentally committed:
+1. Immediately rotate the affected key(s).
+2. Remove the secret from all commits (use `git filter-repo` or `BFG Repo-Cleaner`).
+3. Force-push the cleaned history.
+4. Notify affected parties as needed.
+
+## Contact
+For security issues, contact the repository owner via GitHub.
 # 🔒 Security Checklist for ScottBot
 
 ## ⚠️ IMMEDIATE SECURITY ACTIONS REQUIRED

@@ -1,3 +1,43 @@
+# ScottBott
+
+ScottBott is a modular Discord AI chatbot that leverages multiple AI APIs for cost efficiency and flexibility. It features smart routing between providers (Perplexity, Gemini, and more), image generation, and robust error handling. Designed for easy maintenance, scaling, and secure operation.
+
+## Features
+- Multi-provider AI chat (Perplexity, Gemini, future extensibility)
+- Image generation via Gemini API
+- Smart routing to minimize costs
+- Discord.js framework
+- Secure API key management (.env)
+- Rate limiting and error handling
+- Easy to extend with new commands/providers
+
+## Getting Started
+1. Clone the repo:
+   ```sh
+   git clone https://github.com/4RSO-N/ScottBott.git
+   cd ScottBott
+   ```
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+3. Copy `.env.example` to `.env` and fill in your API keys.
+4. Start the bot:
+   ```sh
+   node bot.js
+   ```
+
+## Security
+- **Never commit API keys or secrets.**
+- All sensitive config is stored in `.env` (excluded by `.gitignore`).
+- Rotate any keys that were previously exposed.
+- See `SECURITY.md` for more details.
+
+## Contributing
+Pull requests are welcome! For major changes, open an issue first to discuss what you’d like to change.
+
+## License
+MIT
 # ScottBot - Multi-AI Discord Chatbot
 
 A powerful Discord bot that leverages multiple AI APIs for cost-efficient and intelligent responses. ScottBot uses **Gemini AI** for image descriptions and **Perplexity AI** for text responses, with smart routing to optimize costs and maintain high availability.
