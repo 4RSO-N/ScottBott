@@ -8,12 +8,13 @@ class HuggingFaceService {
             throw new Error('HUGGINGFACE_API_KEY is required');
         }
 
-        // Using FLUX.1-dev - higher quality, good balance
+    // Using FLUX.1-schnell for faster, lower-memory generation
+    // FLUX.1-dev is higher-quality but may cause OOM on some HF nodes
         // Alternative options:
         // - 'black-forest-labs/FLUX.1-schnell' (faster but lower quality)
         // - 'stabilityai/stable-diffusion-xl-base-1.0' (better prompt adherence)
         // - 'stabilityai/sdxl-turbo' (very fast)
-        this.imageModel = 'black-forest-labs/FLUX.1-dev';
+    this.imageModel = 'black-forest-labs/FLUX.1-schnell';
         this.baseURL = 'https://api-inference.huggingface.co/models';
         
         this.client = axios.create({
