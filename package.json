@@ -1,0 +1,39 @@
+{
+  "name": "scottbott-discord-ai",
+  "version": "1.0.0",
+  "description": "A Discord bot using multiple AI APIs for cost-efficient chatting and image generation",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "ai",
+    "gemini",
+    "perplexity",
+    "chatbot"
+  ],
+  "author": "ScottBott Developer",
+  "license": "MIT",
+  "dependencies": {
+    "@google/genai": "^1.25.0",
+    "@google/generative-ai": "^0.2.1",
+    "axios": "^1.6.2",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1",
+    "express": "^5.1.0",
+    "jimp": "^1.6.0",
+    "sharp": "^0.34.4",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
