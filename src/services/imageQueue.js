@@ -152,10 +152,32 @@ class ImageQueue {
                 size: this.getHighResSize(parsedPrompt.aspectRatio)
             };
 
-            const imageResult = await this.geminiService.generateImage(prompt, qualityOptions);
+            // Prefer Hugging Face for image generation, fallback to Gemini if HF fails
+            let imageResult = null;
+            try {
+                const hf = this.huggingfaceService;
+                if (hf) {
+                    imageResult = await hf.generateImage(prompt, {
+                        width: parseInt(qualityOptions.size.split('x')[0], 10) || 1024,
+                        height: parseInt(qualityOptions.size.split('x')[1], 10) || 1024
+                    });
+                }
+            } catch (hfError) {
+                logger.warn('Hugging Face image generation failed, attempting Gemini fallback:', hfError.message || hfError);
+            }
 
             if (!imageResult || !imageResult.success) {
-                throw new Error(imageResult?.error || 'Image generation failed');
+                // Gemini fallback
+                const gemini = this.geminiService;
+                if (!gemini) {
+                    throw new Error('No image service available (Hugging Face failed and Gemini not initialized)');
+                }
+
+                imageResult = await gemini.generateImage(prompt, qualityOptions);
+
+                if (!imageResult || !imageResult.success) {
+                    throw new Error(imageResult?.error || 'Image generation failed');
+                }
             }
 
             // Update status message - Uploading
@@ -696,4 +718,4 @@ class ImageQueue {
     }
 }
 
-module.exports = new ImageQueue();
+module.exports = ImageQueue;

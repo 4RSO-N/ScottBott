@@ -32,12 +32,14 @@ class ScottBot {
         });
 
         this.commands = new Collection();
-        this.aiRouter = new AIRouter();
+    this.aiRouter = new AIRouter();
         this.rateLimits = new Map();
         
         // Initialize new components
         this.conversationManager = new ConversationManager();
-        this.imageProcessor = new ImageProcessor();
+    this.imageProcessor = new ImageProcessor();
+    const ImageQueueClass = require('./services/imageQueue');
+    this.imageQueue = null; // will initialize after services are ready
         this.performanceMonitor = new PerformanceMonitor();
         this.slashCommandManager = new SlashCommandManager(this);
         this.databaseManager = new DatabaseManager();
@@ -67,6 +69,23 @@ class ScottBot {
             console.log('🤖 Initializing AI Router...');
             await this.aiRouter.initialize();
             console.log('✅ AI Router initialized');
+
+            // Initialize image queue with available image services (prefer HF, fallback Gemini)
+            try {
+                const ImageQueueClass = require('./services/imageQueue');
+                const geminiSvc = this.aiRouter.services.get('gemini');
+                const huggingfaceSvc = this.aiRouter.services.get('huggingface');
+
+                this.imageQueue = new ImageQueueClass();
+                // Attach huggingface reference for preference
+                this.imageQueue.huggingfaceService = huggingfaceSvc;
+                await this.imageQueue.initialize(geminiSvc, this.client);
+                logger.info('✅ ImageQueue initialized with Gemini and Hugging Face services');
+            } catch (e) {
+                logger.warn('ImageQueue initialization skipped or failed:', e.message || e);
+                // Keep imageQueue null — image endpoints will return friendly error
+                this.imageQueue = null;
+            }
             
             // Initialize database first
             console.log('💾 Initializing Database...');
