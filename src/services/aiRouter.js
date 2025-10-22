@@ -33,9 +33,11 @@ class AIRouter {
     async initializeServices() {
         try {
             // Initialize Gemini service (primary for chat)
-            if (this.hasValidApiKey('GEMINI_API_KEY')) {
-                this.services.set('gemini', new GeminiService());
-                logger.info('✅ Gemini 2.5 Flash ready for chat');
+                if (this.hasValidApiKey('GEMINI_API_KEY')) {
+                    this.services.set('gemini', new GeminiService());
+                    logger.info('✅ Gemini 2.5 Flash ready for chat');
+                } else {
+                    logger.info('ℹ️ Gemini service skipped - API key missing or invalid (check GEMINI_API_KEY)');
             }
 
             // Initialize Perplexity as backup for chat
